@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GitHub Activity Summary</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>GitHub Activity Summary</h1>
+        
+        <div class="header-section">
+            <div class="user-info">
+                <img id="avatar" class="avatar-small" src="misc/gravatar_placeholder.png" alt="User avatar">
+                <a id="userLogin" class="user-login-link" href="#" target="_blank">GitHub User</a>
+            </div>
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    id="usernameInput" 
+                    placeholder="Enter GitHub username"
+                >
+                <button onclick="loadUserAndPRs()">Load</button>
+            </div>
+        </div>
+        <div id="errorMessage" class="error-message"></div>
+
+        <div class="pr-section">
+            <h2>Pull Requests from intel/torch-xpu-ops</h2>
+            <div id="prList" class="pr-list"></div>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
