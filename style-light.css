@@ -60,8 +60,53 @@ body {
 
 h1 {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 0;
     color: #16a085;
+}
+
+.header-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.contribution-grid-icon {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.grid-row {
+    display: flex;
+    gap: 2px;
+}
+
+.grid-cell {
+    width: 9px;
+    height: 9px;
+    border-radius: 2px;
+}
+
+.grid-cell.level-0 {
+    background: #ebedf0;
+}
+
+.grid-cell.level-1 {
+    background: #a8e6dc;
+}
+
+.grid-cell.level-2 {
+    background: #5dc9b4;
+}
+
+.grid-cell.level-3 {
+    background: #16a085;
+}
+
+.grid-cell.level-4 {
+    background: #138d75;
 }
 
 .repo-section {
@@ -69,7 +114,7 @@ h1 {
     border: 1px solid #d0d7de;
     border-radius: 6px;
     padding: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
