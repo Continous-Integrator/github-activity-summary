@@ -181,7 +181,7 @@ async function loadUserAndPRs() {
         
         for (const repo of selectedRepos) {
             try {
-                let searchQuery = `repo:${repo} author:${username} type:pr created:>=${startDate} created:<=${endDate}`;
+                let searchQuery = `repo:${repo} author:${username} type:pr created:${startDate}..${endDate}`;
                 const prResponse = await fetch(`https://api.github.com/search/issues?q=${encodeURIComponent(searchQuery)}&per_page=100`);
                 
                 if (!prResponse.ok) {
