@@ -176,7 +176,7 @@ h1 {
     background: transparent;
     color: #8b949e;
     padding: 4px 8px;
-    font-size: 16px;
+    font-size: 18px;
     min-width: auto;
     border: 1px solid transparent;
     transition: all 0.2s;
@@ -262,7 +262,12 @@ button:hover {
     color: #f85149;
     font-size: 14px;
     margin-top: 10px;
-    min-height: 20px;
+    transition: all 0.2s ease;
+}
+
+.error-message:empty {
+    margin-top: 0;
+    display: none;
 }
 
 .pr-section {

@@ -3,11 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>GitHub Activity Summary</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style-dark.css" id="theme-stylesheet">
 </head>
 <body>
+    <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span class="theme-icon"></span>
+    </button>
+    
     <div class="container">
         <h1>GitHub Activity Summary</h1>
+        
+        <div class="repo-section">
+            <h2>Select Repositories</h2>
+            <div class="repo-selection">
+                <div id="repoList" class="repo-list"></div>
+                <div class="custom-repo">
+                    <input 
+                        type="text" 
+                        id="customRepo" 
+                        placeholder="Add repository (owner/repo)"
+                    >
+                    <button onclick="addCustomRepo()">Add</button>
+                </div>
+                <div id="repoErrorMessage" class="error-message"></div>
+            </div>
+        </div>
         
         <div class="header-section">
             <div class="user-info">
@@ -23,10 +43,10 @@
                 <button onclick="loadUserAndPRs()">Load</button>
             </div>
         </div>
-        <div id="errorMessage" class="error-message"></div>
+        <div id="userErrorMessage" class="error-message"></div>
 
         <div class="pr-section">
-            <h2>Pull Requests from intel/torch-xpu-ops</h2>
+            <h2>Pull Requests</h2>
             <div id="prList" class="pr-list"></div>
         </div>
     </div>
