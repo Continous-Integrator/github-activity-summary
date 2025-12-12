@@ -134,6 +134,11 @@ function removeRepo(index) {
     repositories.splice(index, 1);
     saveRepositoriesToCache();
     renderRepoList();
+    // Clear error message when repo is removed
+    const repoErrorElement = document.getElementById('repoErrorMessage');
+    if (repoErrorElement) {
+        repoErrorElement.textContent = '';
+    }
 }
 
 function getSelectedRepos() {
