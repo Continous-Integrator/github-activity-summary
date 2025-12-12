@@ -140,6 +140,15 @@ function getSelectedRepos() {
     return repositories.filter(r => r.checked).map(r => r.name);
 }
 
+// Convert date from DD-MM-YYYY to YYYY-MM-DD for GitHub API
+function convertToAPIFormat(dateStr) {
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+        return `${parts[2]}-${parts[1]}-${parts[0]}`; // YYYY-MM-DD
+    }
+    return dateStr;
+}
+
 async function loadUserAndPRs() {
     const errorElement = document.getElementById('userErrorMessage');
     const prList = document.getElementById('prList');
@@ -176,8 +185,12 @@ async function loadUserAndPRs() {
         
         let allUserPRs = [];
         
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
+        // Get dates and convert from DD-MM-YYYY to YYYY-MM-DD for GitHub API
+        const startDateInput = document.getElementById('startDate').value;
+        const endDateInput = document.getElementById('endDate').value;
+        
+        const startDate = startDateInput ? convertToAPIFormat(startDateInput) : '';
+        const endDate = endDateInput ? convertToAPIFormat(endDateInput) : '';
         
         for (const repo of selectedRepos) {
             try {
@@ -234,8 +247,8 @@ async function loadUserAndPRs() {
                         #${pr.number}: ${pr.title}
                     </a>
                     <div class="pr-meta">
-                        Created: ${new Date(pr.created_at).toLocaleDateString()}
-                        ${pr.merged_at ? ` | Merged: ${new Date(pr.merged_at).toLocaleDateString()}` : ''}
+                        Created: ${new Date(pr.created_at).toLocaleDateString('pl-PL')}
+                        ${pr.merged_at ? ` | Merged: ${new Date(pr.merged_at).toLocaleDateString('pl-PL')}` : ''}
                     </div>
                 </div>
             `;
@@ -254,8 +267,13 @@ function setLast31Days() {
     const startDate = new Date();
     startDate.setDate(endDate.getDate() - 31);
     
-    document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
-    document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
+    // Use Flatpickr's setDate to properly update the pickers
+    if (startDatePicker) {
+        startDatePicker.setDate(startDate, true);
+    }
+    if (endDatePicker) {
+        endDatePicker.setDate(endDate, true);
+    }
 }
 
 function validateDateRange() {
@@ -273,22 +291,40 @@ let startDatePicker, endDatePicker;
 function initializeDates() {
     // Initialize Flatpickr for start date
     startDatePicker = flatpickr("#startDate", {
-        dateFormat: "Y-m-d",
+        dateFormat: "d-m-Y",
+        altInput: true,
+        altFormat: "d-m-Y",
         onChange: function(selectedDates, dateStr) {
-            // Update end date's minDate to prevent selecting earlier date
+            // Auto-adjust end date if it's before the new start date
             if (endDatePicker) {
-                endDatePicker.set('minDate', dateStr);
+                const endDateValue = document.getElementById('endDate').value;
+                if (endDateValue) {
+                    const endDateObj = endDatePicker.parseDate(endDateValue, "d-m-Y");
+                    const startDateObj = selectedDates[0];
+                    if (endDateObj && startDateObj && endDateObj < startDateObj) {
+                        endDatePicker.setDate(startDateObj, true);
+                    }
+                }
             }
         }
     });
     
     // Initialize Flatpickr for end date
     endDatePicker = flatpickr("#endDate", {
-        dateFormat: "Y-m-d",
+        dateFormat: "d-m-Y",
+        altInput: true,
+        altFormat: "d-m-Y",
         onChange: function(selectedDates, dateStr) {
-            // Update start date's maxDate to prevent selecting later date
+            // Auto-adjust start date if it's after the new end date
             if (startDatePicker) {
-                startDatePicker.set('maxDate', dateStr);
+                const startDateValue = document.getElementById('startDate').value;
+                if (startDateValue) {
+                    const startDateObj = startDatePicker.parseDate(startDateValue, "d-m-Y");
+                    const endDateObj = selectedDates[0];
+                    if (startDateObj && endDateObj && startDateObj > endDateObj) {
+                        startDatePicker.setDate(endDateObj, true);
+                    }
+                }
             }
         }
     });
