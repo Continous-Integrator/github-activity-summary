@@ -39,6 +39,21 @@
             </div>
             <h1>GitHub Activity Summary</h1>
         </div>
+
+        <div class="date-section">
+            <h2>Date Range</h2>
+            <div class="date-inputs">
+                <div class="date-input-group">
+                    <label for="startDate">Start Date:</label>
+                    <input type="text" id="startDate" placeholder="Select date" readonly>
+                </div>
+                <div class="date-input-group">
+                    <label for="endDate">End Date:</label>
+                    <input type="text" id="endDate" placeholder="Select date" readonly>
+                </div>
+                <button onclick="setLast31Days()" class="preset-btn">Last 31 Days</button>
+            </div>
+        </div>
         
         <div class="repo-section">
             <h2>Select Repositories</h2>
@@ -71,21 +86,6 @@
             </div>
         </div>
         <div id="userErrorMessage" class="error-message"></div>
-
-        <div class="date-section">
-            <h2>Date Range</h2>
-            <div class="date-inputs">
-                <div class="date-input-group">
-                    <label for="startDate">Start Date:</label>
-                    <input type="text" id="startDate" placeholder="Select date" readonly>
-                </div>
-                <div class="date-input-group">
-                    <label for="endDate">End Date:</label>
-                    <input type="text" id="endDate" placeholder="Select date" readonly>
-                </div>
-                <button onclick="setLast31Days()" class="preset-btn">Last 31 Days</button>
-            </div>
-        </div>
 
         <div class="pr-section">
             <h2>Pull Requests</h2>
