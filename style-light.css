@@ -460,16 +460,26 @@ input:focus {
     background: #ffffff;
 }
 
+/* Prevent browser autocomplete from changing input colors */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
+    -webkit-text-fill-color: #24292f !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
 button {
     padding: 10px 20px;
     background: #16a085;
-    color: white;
+    color: #f6f8fa;
     border: none;
     border-radius: 6px;
     font-size: 14px;
     cursor: pointer;
     white-space: nowrap;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 button:hover {
