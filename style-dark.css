@@ -1,0 +1,359 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 40px 20px;
+    position: relative;
+}
+
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(22, 27, 34, 0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid #30363d;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    padding: 0;
+}
+
+.theme-toggle:hover {
+    background: rgba(26, 188, 156, 0.15);
+    border-color: #1abc9c;
+    transform: scale(1.05);
+}
+
+.theme-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #8b949e;
+    transition: color 0.3s ease;
+}
+
+.theme-toggle:hover .theme-icon {
+    color: #1abc9c;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #1abc9c;
+}
+
+.repo-section {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.repo-section h2 {
+    color: #1abc9c;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.repo-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.repo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.repo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.repo-item:hover {
+    background: rgba(26, 188, 156, 0.08);
+}
+
+.repo-checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.repo-checkbox-wrapper input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #1abc9c;
+    margin: 0;
+}
+
+.repo-checkbox-wrapper input[type="checkbox"]:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.checkbox-label {
+    display: none;
+}
+
+.repo-link {
+    color: #c9d1d9;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.repo-link:hover {
+    color: #1abc9c;
+    text-decoration: underline;
+}
+
+.repo-invalid {
+    background: rgba(248, 81, 73, 0.08);
+    border-left: 2px solid #f85149;
+}
+
+.repo-invalid .repo-link {
+    color: #ffb3ba;
+}
+
+.repo-invalid .repo-link:hover {
+    color: #ffc9ce;
+}
+
+.custom-repo {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding-top: 10px;
+    border-top: 1px solid #30363d;
+    margin-top: 5px;
+}
+
+.custom-repo input {
+    flex: 1;
+    min-width: auto;
+}
+
+.custom-repo button {
+    background: #1abc9c;
+}
+
+.custom-repo button:hover {
+    background: #16a085;
+}
+
+.remove-btn {
+    background: transparent;
+    color: #8b949e;
+    padding: 4px 8px;
+    font-size: 16px;
+    min-width: auto;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.remove-btn:hover {
+    background: rgba(248, 81, 73, 0.15);
+    color: #f85149;
+    border-color: #f85149;
+}
+
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.avatar-small {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #30363d;
+}
+
+.user-login-link {
+    color: #1abc9c;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.user-login-link:hover {
+    text-decoration: underline;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+}
+
+input {
+    padding: 10px 12px;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: #c9d1d9;
+    font-size: 14px;
+    min-width: 200px;
+}
+
+input:focus {
+    outline: none;
+    border-color: #1abc9c;
+}
+
+button {
+    padding: 10px 20px;
+    background: #1abc9c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+button:hover {
+    background: #16a085;
+}
+
+.error-message {
+    color: #f85149;
+    font-size: 14px;
+    margin-top: 10px;
+    min-height: 20px;
+}
+
+.pr-section {
+    margin-top: 20px;
+}
+
+.pr-section h2 {
+    color: #1abc9c;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.pr-list {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 20px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.pr-list::-webkit-scrollbar {
+    width: 10px;
+}
+
+.pr-list::-webkit-scrollbar-track {
+    background: #0d1117;
+    border-radius: 4px;
+}
+
+.pr-list::-webkit-scrollbar-thumb {
+    background: #30363d;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.pr-list::-webkit-scrollbar-thumb:hover {
+    background: #1abc9c;
+}
+
+.pr-list {
+    scrollbar-width: thin;
+    scrollbar-color: #30363d #0d1117;
+}
+
+.pr-item {
+    padding: 12px;
+    border-bottom: 1px solid #30363d;
+    margin-bottom: 10px;
+}
+
+.pr-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.pr-status {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    margin-right: 10px;
+    display: inline-block;
+}
+
+.pr-title {
+    color: #c9d1d9;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.pr-title:hover {
+    text-decoration: underline;
+    color: #1abc9c;
+}
+
+.pr-meta {
+    color: #8b949e;
+    font-size: 13px;
+    margin-top: 5px;
+    margin-left: 26px;
+}
+
+.pr-repo-tag {
+    display: inline-block;
+    background: rgba(26, 188, 156, 0.15);
+    color: #1abc9c;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
