@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>GitHub Activity Summary</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="style-dark.css" id="theme-stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 <body>
     <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
@@ -44,6 +46,21 @@
             </div>
         </div>
         <div id="userErrorMessage" class="error-message"></div>
+
+        <div class="date-section">
+            <h2>Date Range</h2>
+            <div class="date-inputs">
+                <div class="date-input-group">
+                    <label for="startDate">Start Date:</label>
+                    <input type="text" id="startDate" placeholder="Select date" readonly>
+                </div>
+                <div class="date-input-group">
+                    <label for="endDate">End Date:</label>
+                    <input type="text" id="endDate" placeholder="Select date" readonly>
+                </div>
+                <button onclick="setLast31Days()" class="preset-btn">Last 31 Days</button>
+            </div>
+        </div>
 
         <div class="pr-section">
             <h2>Pull Requests</h2>

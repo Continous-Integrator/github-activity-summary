@@ -176,24 +176,21 @@ async function loadUserAndPRs() {
         
         let allUserPRs = [];
         
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        
         for (const repo of selectedRepos) {
             try {
-                const prResponse = await fetch(`https://api.github.com/repos/${repo}/pulls?state=all&per_page=100`);
+                let searchQuery = `repo:${repo} author:${username} type:pr created:>=${startDate} created:<=${endDate}`;
+                const prResponse = await fetch(`https://api.github.com/search/issues?q=${encodeURIComponent(searchQuery)}&per_page=100`);
                 
                 if (!prResponse.ok) {
                     console.warn(`Failed to load PRs from ${repo}`);
                     continue;
                 }
                 
-                const repoPRs = await prResponse.json();
-                
-                // Filter PRs by the current user and add repo info
-                const userPRs = repoPRs.filter(pr => 
-                    pr.user.login === username || 
-                    (pr.assignee && pr.assignee.login === username) ||
-                    (pr.assignees && pr.assignees.some(a => a.login === username))
-                ).map(pr => ({...pr, repoName: repo}));
-                
+                const searchResults = await prResponse.json();
+                const userPRs = searchResults.items.map(pr => ({...pr, repoName: repo}));
                 allUserPRs.push(...userPRs);
             } catch (err) {
                 console.warn(`Error loading PRs from ${repo}:`, err);
@@ -252,9 +249,57 @@ async function loadUserAndPRs() {
     }
 }
 
+function setLast31Days() {
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(endDate.getDate() - 31);
+    
+    document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
+    document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
+}
+
+function validateDateRange() {
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    
+    if (startDate && endDate && startDate > endDate) {
+        // If start date is after end date, adjust end date to match start date
+        document.getElementById('endDate').value = startDate;
+    }
+}
+
+let startDatePicker, endDatePicker;
+
+function initializeDates() {
+    // Initialize Flatpickr for start date
+    startDatePicker = flatpickr("#startDate", {
+        dateFormat: "Y-m-d",
+        onChange: function(selectedDates, dateStr) {
+            // Update end date's minDate to prevent selecting earlier date
+            if (endDatePicker) {
+                endDatePicker.set('minDate', dateStr);
+            }
+        }
+    });
+    
+    // Initialize Flatpickr for end date
+    endDatePicker = flatpickr("#endDate", {
+        dateFormat: "Y-m-d",
+        onChange: function(selectedDates, dateStr) {
+            // Update start date's maxDate to prevent selecting later date
+            if (startDatePicker) {
+                startDatePicker.set('maxDate', dateStr);
+            }
+        }
+    });
+    
+    setLast31Days();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     setTheme(getPreferredTheme());
     
+    initializeDates();
     loadRepositoriesFromCache();
     renderRepoList();
     validateAllRepositories();
