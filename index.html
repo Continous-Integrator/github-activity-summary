@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="style-dark.css" id="theme-stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
     <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
@@ -41,7 +42,7 @@
         </div>
 
         <div class="date-section">
-            <h2>Date Range</h2>
+            <h2><span class="step-indicator">Step 1</span> Pick date range</h2>
             <div class="date-inputs">
                 <div class="date-input-group">
                     <label for="startDate">Start Date:</label>
@@ -56,7 +57,7 @@
         </div>
         
         <div class="repo-section">
-            <h2>Select Repositories</h2>
+            <h2><span class="step-indicator">Step 2</span> Select repositories to track</h2>
             <div class="repo-selection">
                 <div id="repoList" class="repo-list"></div>
                 <div class="custom-repo">
@@ -71,25 +72,51 @@
             </div>
         </div>
         
-        <div class="header-section">
-            <div class="user-info">
-                <img id="avatar" class="avatar-small" src="gravatar_placeholder.png" alt="User avatar">
-                <a id="userLogin" class="user-login-link" href="#" target="_blank">GitHub User</a>
-            </div>
-            <div class="input-group">
+        <div class="username-section">
+            <h2><span class="step-indicator">Step 3</span> Provide GitHub username</h2>
+            <div class="username-input-wrapper">
                 <input 
                     type="text" 
                     id="usernameInput" 
                     placeholder="Enter GitHub username"
                 >
-                <button onclick="loadUserAndPRs()">Load</button>
             </div>
+        </div>
+        
+        <div class="action-section">
+            <button onclick="loadUserAndPRs()" class="load-button">Load Activity</button>
         </div>
         <div id="userErrorMessage" class="error-message"></div>
 
-        <div class="pr-section">
-            <h2>Pull Requests</h2>
-            <div id="prList" class="pr-list"></div>
+        <div class="results-section" style="display: none;" id="resultsSection">
+            <div class="user-summary">
+                <div class="user-info">
+                    <img id="avatar" class="avatar-small" src="gravatar_placeholder.png" alt="User avatar">
+                    <a id="userLogin" class="user-login-link" href="#" target="_blank">GitHub User</a>
+                </div>
+                <div class="pr-stats">
+                    <div class="stat-item">
+                        <span class="stat-value" id="openCount">0</span>
+                        <span class="stat-label">Open</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="mergedCount">0</span>
+                        <span class="stat-label">Merged</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="closedCount">0</span>
+                        <span class="stat-label">Closed</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pr-section">
+                <div class="pr-header">
+                    <h2>Pull Requests</h2>
+                    <button id="downloadBtn" onclick="downloadSelectedDiffs()" class="download-btn" style="display: none;">Download Selected (0)</button>
+                </div>
+                <div id="prList" class="pr-list"></div>
+            </div>
         </div>
     </div>
     

@@ -182,6 +182,9 @@ async function loadUserAndPRs() {
         
         const userData = await userResponse.json();
 
+        // Show results section
+        document.getElementById('resultsSection').style.display = 'block';
+        
         document.getElementById('avatar').src = userData.avatar_url;
         const loginLink = document.getElementById('userLogin');
         loginLink.textContent = userData.login;
@@ -208,8 +211,24 @@ async function loadUserAndPRs() {
                 }
                 
                 const searchResults = await prResponse.json();
-                const userPRs = searchResults.items.map(pr => ({...pr, repoName: repo}));
-                allUserPRs.push(...userPRs);
+                
+                // Fetch full PR details to get merged status
+                for (const issue of searchResults.items) {
+                    try {
+                        const prDetailUrl = issue.pull_request.url;
+                        const prDetailResponse = await fetch(prDetailUrl);
+                        
+                        if (prDetailResponse.ok) {
+                            const prDetail = await prDetailResponse.json();
+                            allUserPRs.push({...issue, ...prDetail, repoName: repo});
+                        } else {
+                            allUserPRs.push({...issue, repoName: repo});
+                        }
+                    } catch (err) {
+                        console.warn(`Error loading PR details:`, err);
+                        allUserPRs.push({...issue, repoName: repo});
+                    }
+                }
             } catch (err) {
                 console.warn(`Error loading PRs from ${repo}:`, err);
             }
@@ -220,50 +239,151 @@ async function loadUserAndPRs() {
             return;
         }
         
+        // Store globally for download functionality
+        window.allPRs = allUserPRs;
+        
         // Sort by creation date (newest first)
         allUserPRs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         
+        // Calculate stats
+        let openCount = 0, mergedCount = 0, closedCount = 0;
+        allUserPRs.forEach(pr => {
+            if (pr.merged_at || pr.pull_request?.merged_at) {
+                mergedCount++;
+            } else if (pr.state === 'closed') {
+                closedCount++;
+            } else if (pr.state === 'open') {
+                openCount++;
+            }
+        });
+        
+        // Update stats display
+        document.getElementById('openCount').textContent = openCount;
+        document.getElementById('mergedCount').textContent = mergedCount;
+        document.getElementById('closedCount').textContent = closedCount;
+        
         // Display PRs
         let html = '';
-        allUserPRs.forEach(pr => {
+        allUserPRs.forEach((pr, index) => {
             // Determine actual status (merged, closed, open)
             let status, statusColor, statusIcon;
-            if (pr.merged_at) {
+            if (pr.merged_at || pr.pull_request?.merged_at) {
                 status = 'merged';
                 statusColor = '#a371f7';
-                statusIcon = '✓';
+                statusIcon = '<svg class="pr-icon" width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.254V3.25v.005a.75.75 0 110-.005v.004zm.45 1.9a2.25 2.25 0 10-1.95.218v5.256a2.25 2.25 0 101.5 0V7.123A5.735 5.735 0 009.25 9h1.378a2.251 2.251 0 100-1.5H9.25a4.25 4.25 0 01-3.8-2.346zM12.75 9a.75.75 0 100-1.5.75.75 0 000 1.5zm-8.5 4.5a.75.75 0 100-1.5.75.75 0 000 1.5z"></path></svg>';
             } else if (pr.state === 'closed') {
                 status = 'closed';
                 statusColor = '#f85149';
-                statusIcon = '✕';
+                statusIcon = '<svg class="pr-icon" width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M3.25 1A2.25 2.25 0 0 1 4 5.372v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.251 2.251 0 0 1 3.25 1Zm9.5 5.5a.75.75 0 0 1 .75.75v3.378a2.251 2.251 0 1 1-1.5 0V7.25a.75.75 0 0 1 .75-.75Zm-2.03-5.273a.75.75 0 0 1 1.06 0l.97.97.97-.97a.748.748 0 0 1 1.265.332.75.75 0 0 1-.205.729l-.97.97.97.97a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-.97-.97-.97.97a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l.97-.97-.97-.97a.75.75 0 0 1 0-1.06ZM2.5 3.25a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0ZM3.25 12a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm9.5 0a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Z"/></svg>';
             } else {
                 status = 'open';
                 statusColor = '#3fb950';
-                statusIcon = '○';
+                statusIcon = '<svg class="pr-icon" width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z"/></svg>';
             }
             
             html += `
                 <div class="pr-item">
-                    <div class="pr-repo-tag">${pr.repoName}</div>
-                    <span class="pr-status" style="color: ${statusColor};">
-                        ${statusIcon} ${status.toUpperCase()}
-                    </span>
-                    <a href="${pr.html_url}" target="_blank" class="pr-title">
-                        #${pr.number}: ${pr.title}
-                    </a>
-                    <div class="pr-meta">
-                        Created: ${new Date(pr.created_at).toLocaleDateString('pl-PL')}
-                        ${pr.merged_at ? ` | Merged: ${new Date(pr.merged_at).toLocaleDateString('pl-PL')}` : ''}
+                    <div class="pr-content">
+                        <div class="pr-repo-tag">${pr.repoName}</div>
+                        <span class="pr-status" style="color: ${statusColor};">
+                            ${statusIcon} ${status.toUpperCase()}
+                        </span>
+                        <a href="${pr.html_url}" target="_blank" class="pr-title">
+                            #${pr.number}: ${pr.title}
+                        </a>
+                        <div class="pr-meta">
+                            Created: ${new Date(pr.created_at).toLocaleDateString('pl-PL')}
+                            ${pr.merged_at ? ` | Merged: ${new Date(pr.merged_at).toLocaleDateString('pl-PL')}` : ''}
+                        </div>
                     </div>
+                    <input type="checkbox" id="pr-${index}" class="pr-checkbox" onchange="updateDownloadButton()">
+                    <label for="pr-${index}" class="pr-checkbox-label"></label>
                 </div>
             `;
         });
         
         prList.innerHTML = html;
+        updateDownloadButton();
         
     } catch (err) {
         errorElement.textContent = '❌ Network error. Try again.';
         prList.innerHTML = '';
+    }
+}
+
+function updateDownloadButton() {
+    const checkboxes = document.querySelectorAll('.pr-checkbox:checked');
+    const downloadBtn = document.getElementById('downloadBtn');
+    
+    // Update selected visual state for all PR items
+    document.querySelectorAll('.pr-item').forEach(item => {
+        const checkbox = item.querySelector('.pr-checkbox');
+        if (checkbox && checkbox.checked) {
+            item.classList.add('selected');
+        } else {
+            item.classList.remove('selected');
+        }
+    });
+    
+    if (checkboxes.length > 0) {
+        downloadBtn.style.display = 'block';
+        downloadBtn.textContent = `Download Selected (${checkboxes.length})`;
+    } else {
+        downloadBtn.style.display = 'none';
+    }
+}
+
+async function downloadSelectedDiffs() {
+    const checkboxes = document.querySelectorAll('.pr-checkbox:checked');
+    if (checkboxes.length === 0) return;
+    
+    const downloadBtn = document.getElementById('downloadBtn');
+    const originalText = downloadBtn.textContent;
+    downloadBtn.textContent = 'Downloading...';
+    downloadBtn.disabled = true;
+    
+    try {
+        const zip = new JSZip();
+        
+        for (const checkbox of checkboxes) {
+            const index = parseInt(checkbox.id.split('-')[1]);
+            const pr = window.allPRs[index];
+            
+            try {
+                // Fetch the diff using GitHub API
+                const response = await fetch(pr.pull_request.url, {
+                    headers: {
+                        'Accept': 'application/vnd.github.v3.diff'
+                    }
+                });
+                
+                if (response.ok) {
+                    const diffContent = await response.text();
+                    const filename = `${pr.repoName.replace('/', '-')}-${pr.number}.diff`;
+                    zip.file(filename, diffContent);
+                }
+            } catch (err) {
+                console.warn(`Failed to download diff for PR #${pr.number}:`, err);
+            }
+        }
+        
+        // Generate and download the zip file
+        const content = await zip.generateAsync({type: 'blob'});
+        const url = URL.createObjectURL(content);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `pr-diffs-${new Date().toISOString().split('T')[0]}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+    } catch (err) {
+        console.error('Error creating zip:', err);
+        alert('Failed to download diffs. Please try again.');
+    } finally {
+        downloadBtn.textContent = originalText;
+        downloadBtn.disabled = false;
     }
 }
 
